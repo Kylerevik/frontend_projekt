@@ -1,289 +1,169 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free Games Finder</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-body {
-    background-color: #0b0c10;
-    color: #ffffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-header {
-    background: linear-gradient(90deg, #1f2833, #45a29e);
-    color: #fff;
-    padding: 30px 0;
-    text-align: center;
-    font-size: 2.5rem;
-    font-weight: 700;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-}
-#filters {
-    background-color: #1c1f26;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px auto;
-}
-#games {
-    display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
-    gap: 20px;
-    padding: 20px;
-}
-.game {
-    background-color: #1f2833;
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-.game:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.7);
-}
-.game img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-}
-.game-content {
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    height: 140px;
-}
-.game-content h5 {
-    margin: 0 0 8px 0;
-    font-size: 1.2rem;
-}
-.game-content p {
-    flex:1;
-    font-size: 0.9rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.modal-content {
-    background-color: #1c1f26;
-    color: #fff;
-    border-radius: 12px;
-}
-.modal-header, .modal-footer {
-    border:none;
-}
-.modal-body img {
-    width: 100%;
-    border-radius: 10px;
-    margin-bottom: 15px;
-}
-.modal a.btn-primary {
-    background-color: #45a29e;
-    border-color: #45a29e;
-}
-.modal a.btn-primary:hover {
-    background-color: #1f8c7a;
-    border-color: #1f8c7a;
-}
-.loader {
-    text-align:center;
-    font-size:18px;
-    margin:50px 0;
-    color:#45a29e;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>Free Games Finder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Saját stílus -->
+    <link rel="stylesheet" href="css/style.css">
+    
 </head>
 <body>
 
-<header>Free Games Finder</header>
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 99999;">
+    <div id="gameToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage">
+                <!-- Toast üzenet -->
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+<div id="sidebar">
+    <button title="Language / Nyelv / Jazyk" onclick="toggleLanguageMenu()" id="langButton">🌍</button>
+    <div id="languageMenu" class="language-menu" style="display: none;">
+        <button onclick="changeLanguage('hu')" class="lang-option">🇭🇺</button>
+        <button onclick="changeLanguage('en')" class="lang-option">🇬🇧</button>
+        <button onclick="changeLanguage('sk')" class="lang-option">🇸🇰</button>
+    </div>
+    <button title="📊" onclick="openStatsModal()" data-translate="tooltip-stats">📊</button>
+    <button title="⭐" onclick="openFavoritesModal()" data-translate="tooltip-favorites">⭐</button>
+    <button title="🔥" onclick="openTopGamesModal()" data-translate="tooltip-top">🔥</button>
+</div>
 
-<div class="container">
-    <div id="filters" class="d-flex flex-wrap justify-content-center gap-2">
-        <input type="text" id="searchInput" class="form-control" style="max-width:300px;" placeholder="Search games...">
+<!-- Stats Modal -->
+<div class="modal fade" id="statsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content p-3">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" data-translate="stats-title">Statisztika - Műfaj szerinti eloszlás</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center" style="padding: 20px;">
+                <canvas id="statsCanvasModal"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Favorites Modal -->
+<div class="modal fade" id="favoritesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content p-3">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" data-translate="favorites-title">Kedvenc Játékok</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="favoritesModalBody">
+                <!-- Kedvencek itt jelennek meg -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Games Modal -->
+<div class="modal fade" id="topGamesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content p-3">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" data-translate="top-title">Top Játékok</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="topGamesList" class="list-group"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="header-content">
+        <div class="header-icon">🎮</div>
+        <h1 class="header-title">
+            <span class="title-free" data-translate="header-free">Free</span>
+            <span class="title-games" data-translate="header-games">Games</span>
+            <span class="title-finder" data-translate="header-finder">Finder</span>
+        </h1>
+        <p class="header-subtitle" data-translate="header-subtitle">Discover the best free-to-play games</p>
+    </div>
+    <div class="header-decoration">
+        <div class="decoration-circle circle-1"></div>
+        <div class="decoration-circle circle-2"></div>
+        <div class="decoration-circle circle-3"></div>
+    </div>
+</header>
+
+<div class="container mb-5">
+    <!-- Filters -->
+    <div id="filters" class="d-flex flex-wrap justify-content-center gap-2 mb-4 align-items-center">
+        <input type="text" id="searchInput" class="form-control" style="max-width:300px;" placeholder="Search games..." data-translate-placeholder="search-placeholder">
         <select id="platformSelect" class="form-select" style="max-width:200px;">
-            <option value="all">All Platforms</option>
-            <option value="pc">PC</option>
-            <option value="browser">Browser</option>
+            <option value="all" data-translate="platform-all">All Platforms</option>
+            <option value="pc" data-translate="platform-pc">PC (Windows)</option>
+            <option value="browser" data-translate="platform-browser">Web Browser</option>
         </select>
-        <select id="categorySelect" class="form-select" style="max-width:250px;">
-            <option value="">All Genres</option>
-            <option value="MMO">MMO</option>
-            <option value="MMORPG">MMORPG</option>
+        <select id="categorySelect" class="form-select" style="max-width:200px;">
+            <option value="" data-translate="genre-all">All Genres</option>
             <option value="Shooter">Shooter</option>
-            <option value="Strategy">Strategy</option>
-            <option value="Moba">Moba</option>
-            <option value="Card Games">Card Games</option>
+            <option value="MMORPG">MMORPG</option>
             <option value="Racing">Racing</option>
+            <option value="Strategy">Strategy</option>
             <option value="Sports">Sports</option>
-            <option value="Social">Social</option>
-            <option value="Fighting">Fighting</option>
-            <option value="MMOFPS">MMOFPS</option>
-            <option value="Action RPG">Action RPG</option>
-            <option value="Sandbox">Sandbox</option>
-            <option value="Open World">Open World</option>
-            <option value="Survival">Survival</option>
-            <option value="Battle Royale">Battle Royale</option>
-            <option value="MMOTPS">MMOTPS</option>
-            <option value="Anime">Anime</option>
-            <option value="PvP">PvP</option>
-            <option value="PvE">PvE</option>
-            <option value="Pixel">Pixel</option>
-            <option value="MMORTS">MMORTS</option>
-            <option value="Fantasy">Fantasy</option>
-            <option value="Sci-fi">Sci-fi</option>
             <option value="Action">Action</option>
-            <option value="Voxel">Voxel</option>
-            <option value="Zombie">Zombie</option>
-            <option value="Turn-Based">Turn-Based</option>
-            <option value="First Person View">First Person View</option>
-            <option value="Third Person View">Third Person View</option>
-            <option value="Top-Down View">Top-Down View</option>
-            <option value="3D Graphics">3D Graphics</option>
-            <option value="2D Graphics">2D Graphics</option>
-            <option value="Tank">Tank</option>
-            <option value="Space">Space</option>
-            <option value="Sailing">Sailing</option>
-            <option value="Side Scroller">Side Scroller</option>
-            <option value="Superhero">Superhero</option>
-            <option value="Permadeath">Permadeath</option>
+            <option value="Card Game" data-translate="genre-card">Card Game</option>
         </select>
         <select id="sortSelect" class="form-select" style="max-width:200px;">
-            <option value="relevance">Relevance</option>
-            <option value="popularity">Popularity</option>
-            <option value="release-date">Release Date</option>
-            <option value="alphabetical">Alphabetical</option>
+            <option value="relevance" data-translate="sort-relevance">Relevance</option>
+            <option value="release-date" data-translate="sort-date">Release Date</option>
+            <option value="alphabetical" data-translate="sort-alpha">Alphabetical</option>
         </select>
-        <button class="btn btn-primary" onclick="resetAndLoadGames()">Search</button>
+        <button class="btn btn-primary btn-lg" onclick="filterAndSortGames()" data-translate="btn-search">Search</button>
     </div>
 
+    <!-- Games -->
+    <h3 class="mt-4 text-center" data-translate="games-title">Játékok</h3>
     <div id="games"></div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="gameModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content p-3">
-      <div class="modal-header border-0">
-        <h5 class="modal-title" id="modalTitle"></h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <img id="modalImage" src="" alt="">
-        <p id="modalDesc"></p>
-        <p><strong>Platform:</strong> <span id="modalPlatform"></span></p>
-        <p><strong>Genre:</strong> <span id="modalCategory"></span></p>
-      </div>
-      <div class="modal-footer border-0">
-        <a id="modalPlay" href="#" target="_blank" class="btn btn-primary">Play Now</a>
-      </div>
+    
+    <!-- Loading indicator (láthatatlan, csak technikai) -->
+    <div id="loading-indicator" style="display: none; text-align: center; padding: 20px; opacity: 0.5;">
+        <div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem;">
+            <span class="visually-hidden" data-translate="loading">Loading...</span>
+        </div>
     </div>
-  </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-const RAPIDAPI_KEY = 'e3bbf6ee45mshae51a53c862ca72p1cd1a4jsna02238368745';
-const baseUrl = 'https://free-to-play-games-database.p.rapidapi.com/api/games';
-let currentPage = 0;
-let pageSize = 20;
-let loading = false;
-let allGames = [];
+<!-- Game Modal -->
+<div class="modal fade" id="gameModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content p-3">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="" class="img-fluid rounded mb-3">
+                <p id="modalDesc"></p>
+                <p><strong data-translate="modal-platform">Platform:</strong> <span id="modalPlatform"></span></p>
+                <p><strong data-translate="modal-genre">Genre:</strong> <span id="modalCategory"></span></p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <a id="modalPlay" href="#" target="_blank" class="btn btn-success btn-lg" data-translate="btn-play">Play Now</a>
+                <button id="favButton" class="btn btn-warning btn-lg" data-is-favorite="false" data-translate="btn-add-fav">⭐ Kedvencekhez adás</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-async function loadGames(page = 0) {
-    if(loading) return;
-    loading = true;
-    const container = document.getElementById('games');
-    if(page===0) container.innerHTML='<div class="loader">Loading games...</div>';
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <script src="js/sqlite-init.js"></script>
+    <script src="js/app.js"></script>   
 
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const platform = document.getElementById('platformSelect').value;
-    const category = document.getElementById('categorySelect').value;
-    const sort = document.getElementById('sortSelect').value;
-
-    let url = baseUrl + '?';
-    if(platform !== 'all') url += `platform=${platform}&`;
-    if(category) url += `category=${category}&`;
-
-    const options = {
-        method:'GET',
-        headers:{
-            'X-RapidAPI-Key': RAPIDAPI_KEY,
-            'X-RapidAPI-Host':'free-to-play-games-database.p.rapidapi.com'
-        }
-    };
-
-    try {
-        const response = await fetch(url, options);
-        const data = await response.json();
-        allGames = data.filter(g=>g.title.toLowerCase().includes(searchTerm));
-        // Sort
-        switch(sort){
-            case 'alphabetical': allGames.sort((a,b)=>a.title.localeCompare(b.title)); break;
-            case 'popularity': allGames.sort((a,b)=>b.freetogame_profile_url?.length - a.freetogame_profile_url?.length); break;
-            case 'release-date': allGames.sort((a,b)=>new Date(b.release_date)-new Date(a.release_date)); break;
-            default: break;
-        }
-        displayGames(page);
-    } catch(err){
-        console.error('Error loading games:',err);
-        container.innerHTML='<p style="text-align:center; color:red;">Error fetching games.</p>';
-    } finally { loading=false; }
-}
-
-function displayGames(page){
-    const container = document.getElementById('games');
-    if(page===0) container.innerHTML='';
-    const start = page*pageSize;
-    const end = start+pageSize;
-    const gamesToShow = allGames.slice(start,end);
-    if(gamesToShow.length===0 && page===0){
-        container.innerHTML='<p class="text-center">No games found.</p>';
-        return;
-    }
-    gamesToShow.forEach(game=>{
-        const gameDiv=document.createElement('div');
-        gameDiv.classList.add('game');
-        gameDiv.innerHTML=`<img src="${game.thumbnail}" alt="${game.title}"><div class="game-content"><h5>${game.title}</h5><p>${game.short_description}</p></div>`;
-        gameDiv.addEventListener('click',()=>openModal(game));
-        container.appendChild(gameDiv);
-    });
-}
-
-function resetAndLoadGames(){
-    currentPage=0;
-    allGames=[];
-    loadGames(0);
-}
-
-function openModal(game){
-    document.getElementById('modalImage').src=game.thumbnail;
-    document.getElementById('modalTitle').textContent=game.title;
-    document.getElementById('modalDesc').textContent=game.description || game.short_description;
-    document.getElementById('modalPlatform').textContent=game.platform;
-    document.getElementById('modalCategory').textContent=game.genre;
-    document.getElementById('modalPlay').href=game.game_url;
-    const modal = new bootstrap.Modal(document.getElementById('gameModal'));
-    modal.show();
-}
-
-// Infinite scroll
-window.addEventListener('scroll',()=>{
-    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 500){
-        if(!loading && (currentPage+1)*pageSize < allGames.length){
-            currentPage++;
-            displayGames(currentPage);
-        }
-    }
-});
-
-// Events
-document.getElementById('searchInput').addEventListener('input',resetAndLoadGames);
-document.getElementById('platformSelect').addEventListener('change',resetAndLoadGames);
-document.getElementById('categorySelect').addEventListener('change',resetAndLoadGames);
-document.getElementById('sortSelect').addEventListener('change',resetAndLoadGames);
-
-// First load
-loadGames(0);
-</script>
 </body>
 </html>
