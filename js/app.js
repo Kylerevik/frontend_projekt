@@ -100,7 +100,7 @@ const translations = {
     sk: {
         'header-free': 'Hry',
         'header-games': 'zadarmo',
-        'header-finder': '',
+        'header-finder': ' ',
         'header-subtitle': 'Objavte najlepšie hry zadarmo',
         'search-placeholder': 'Hľadať hry...',
         'platform-all': 'Všetky Platformy',
