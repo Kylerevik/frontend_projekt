@@ -40,8 +40,8 @@ header {
 }
 
 .title-free {
-    color: #66FCF1;
-    text-shadow: 0 0 20px rgba(102, 252, 241, 0.5);
+    color: #FFA500;
+    text-shadow: 0 0 20px rgba(255, 165, 0, 0.6);
 }
 
 .title-games {
@@ -50,8 +50,8 @@ header {
 }
 
 .title-finder {
-    color: #45a29e;
-    text-shadow: 0 0 20px rgba(69, 162, 158, 0.5);
+    color: #66FCF1;
+    text-shadow: 0 0 20px rgba(102, 252, 241, 0.5);
 }
 
 .header-subtitle {
@@ -131,7 +131,7 @@ header {
     margin-top: 20px;
 }
 
-.game, .favorite {
+.game, .favorite, .favorite-card {
     background-color: #1f2833;
     border-radius: 12px;
     overflow: hidden;
@@ -140,6 +140,58 @@ header {
     position: relative;
     border: 2px solid transparent;
     will-change: transform, opacity;
+}
+
+.favorite-card {
+    cursor: default;
+}
+
+.favorite-card .fav-content {
+    padding: 15px;
+}
+
+.favorite-card h6 {
+    color: #66FCF1;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.fav-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.fav-actions button {
+    flex: 1;
+    font-size: 0.85rem;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.fav-actions .btn-info {
+    background: linear-gradient(135deg, #087E8B, #0B3954);
+}
+
+.fav-actions .btn-info:hover {
+    background: linear-gradient(135deg, #0B3954, #087E8B);
+    transform: translateY(-2px);
+}
+
+.fav-actions .btn-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.fav-actions .btn-danger:hover {
+    background: linear-gradient(135deg, #c82333, #bd2130);
+    transform: translateY(-2px);
+}
+
+.fav-actions button i {
+    font-style: normal;
+    margin-right: 3px;
 }
 
 .game:hover, .favorite:hover {
@@ -280,31 +332,45 @@ canvas {
 
 .lang-option {
     width: 100%;
-    padding: 12px;
+    padding: 8px;
     margin: 5px 0;
     background: #0b0c10;
-    border: 1px solid #45a29e;
+    border: 2px solid #45a29e;
     border-radius: 8px;
     color: white;
-    font-size: 24px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+.lang-option img {
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 0 5px rgba(69, 162, 158, 0.5));
+}
+
 .lang-option:hover {
     background: #45a29e;
     transform: scale(1.1);
+    border-color: #66FCF1;
+}
+
+.lang-option:hover img {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 10px rgba(102, 252, 241, 0.8));
 }
 
 .lang-option.active {
     background: #66FCF1;
     border-color: #66FCF1;
-    box-shadow: 0 0 20px rgba(102, 252, 241, 0.5);
+    box-shadow: 0 0 20px rgba(102, 252, 241, 0.6);
     transform: scale(1.15);
+}
+
+.lang-option.active img {
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
 }
 
 /* Bootstrap override */
@@ -320,38 +386,43 @@ canvas {
 }
 
 .btn-success {
-    background-color: #087E8B;
+    background: linear-gradient(135deg, #087E8B 0%, #0B3954 100%);
     border-color: #087E8B;
+    transition: all 0.3s ease;
 }
 
 .btn-success:hover {
-    background-color: #0B3954;
+    background: linear-gradient(135deg, #0B3954 0%, #087E8B 100%);
     border-color: #0B3954;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(8, 126, 139, 0.4);
 }
 
 .btn-warning {
-    background-color: #FFA500;
+    background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
     border-color: #FFA500;
     color: #fff;
     transition: all 0.3s ease;
 }
 
 .btn-warning:hover {
-    background-color: #FF8C00;
+    background: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%);
     border-color: #FF8C00;
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 165, 0, 0.4);
 }
 
 .btn-danger {
-    background-color: #dc3545;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     border-color: #dc3545;
     transition: all 0.3s ease;
 }
 
 .btn-danger:hover {
-    background-color: #c82333;
+    background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
     border-color: #bd2130;
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
 }
 
 .form-control, .form-select {
@@ -381,6 +452,17 @@ canvas {
 .list-group-item:hover {
     background-color: #45a29e;
     color: #fff;
+}
+
+/* ==== GAME MODAL IMAGE ==== */
+.game-modal-image-large {
+    max-height: 500px;
+    max-width: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(69, 162, 158, 0.3);
+    border: 2px solid #45a29e;
 }
 
 /* Responsive kisebb eszközökre */
@@ -443,6 +525,24 @@ canvas {
 
     #games, #favorites {
         grid-template-columns: 1fr;
+    }
+    
+    .modal-body .row {
+        flex-direction: column;
+    }
+    
+    .modal-body .row .col-md-7,
+    .modal-body .row .col-md-5 {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    .game-modal-image-large {
+        max-height: 250px;
+    }
+    
+    #modalTitle {
+        font-size: 1.5rem !important;
     }
 }
 
