@@ -22,6 +22,7 @@ const translations = {
         'platform-browser': 'Webböngésző',
         'genre-all': 'Minden Műfaj',
         'genre-card': 'Kártyajáték',
+        'genre-racing': 'Racing',
         'sort-relevance': 'Relevancia',
         'sort-date': 'Megjelenési Dátum',
         'sort-alpha': 'ABC Sorrend',
@@ -36,6 +37,7 @@ const translations = {
         'btn-play': 'Játék Indítása',
         'btn-add-fav': '⭐ Kedvencekhez adás',
         'btn-remove-fav': '🗑️ Eltávolítás a kedvencekből',
+        'btn-confirm-remove': '⚠️ Biztos vagy benne?',
         'tooltip-stats': '📊',
         'tooltip-favorites': '⭐',
         'tooltip-top': '🔥',
@@ -47,7 +49,10 @@ const translations = {
         'toast-already': 'Már a kedvencek között van!',
         'toast-error': 'Hiba történt!',
         'confirm-remove': 'Eltávolítod a kedvencek közül:',
-        'stats-chart-title': 'Játékok műfaj szerinti megoszlása'
+        'stats-chart-title': 'Játékok műfaj szerinti megoszlása',
+        'fav-view': 'Megnéz',
+        'fav-remove': 'Törlés',
+        'fav-confirm': 'Biztos?'
     },
     en: {
         'header-free': 'Free',
@@ -60,6 +65,7 @@ const translations = {
         'platform-browser': 'Web Browser',
         'genre-all': 'All Genres',
         'genre-card': 'Card Game',
+        'genre-racing': 'Racing',
         'sort-relevance': 'Relevance',
         'sort-date': 'Release Date',
         'sort-alpha': 'Alphabetical',
@@ -74,6 +80,7 @@ const translations = {
         'btn-play': 'Play Now',
         'btn-add-fav': '⭐ Add to Favorites',
         'btn-remove-fav': '🗑️ Remove from Favorites',
+        'btn-confirm-remove': '⚠️ Are you sure?',
         'tooltip-stats': '📊',
         'tooltip-favorites': '⭐',
         'tooltip-top': '🔥',
@@ -85,19 +92,23 @@ const translations = {
         'toast-already': 'Already in favorites!',
         'toast-error': 'An error occurred!',
         'confirm-remove': 'Remove from favorites:',
-        'stats-chart-title': 'Games by Genre Distribution'
+        'stats-chart-title': 'Games by Genre Distribution',
+        'fav-view': 'View',
+        'fav-remove': 'Remove',
+        'fav-confirm': 'Sure?'
     },
     sk: {
-        'header-free': 'Zadarmo',
-        'header-games': 'Hry',
-        'header-finder': 'Vyhľadávač',
+        'header-free': 'Hry',
+        'header-games': 'zadarmo',
+        'header-finder': '',
         'header-subtitle': 'Objavte najlepšie hry zadarmo',
         'search-placeholder': 'Hľadať hry...',
         'platform-all': 'Všetky Platformy',
         'platform-pc': 'PC (Windows)',
         'platform-browser': 'Webový Prehliadač',
         'genre-all': 'Všetky Žánre',
-        'genre-card': 'Kartová Hra',
+        'genre-card': 'Kartové hry',
+        'genre-racing': 'Zavodné',
         'sort-relevance': 'Relevancia',
         'sort-date': 'Dátum Vydania',
         'sort-alpha': 'Abecedne',
@@ -112,18 +123,22 @@ const translations = {
         'btn-play': 'Hrať Teraz',
         'btn-add-fav': '⭐ Pridať do Obľúbených',
         'btn-remove-fav': '🗑️ Odstrániť z Obľúbených',
+        'btn-confirm-remove': '⚠️ Ste si istý?',
         'tooltip-stats': '📊',
         'tooltip-favorites': '⭐',
         'tooltip-top': '🔥',
         'no-results': 'Nenašli sa žiadne výsledky pre vaše kritériá.',
-        'no-favorites': 'Nemáte žiadne obľúbené hry. Pridajte nejaké!',
+        'no-favorites': 'Zatiaľ nemáte žiadne obľúbené hry. Pridajte niektoré!',
         'no-top-games': 'Nie sú k dispozícii údaje pre top hry.',
         'toast-added': 'pridané do obľúbených!',
         'toast-removed': 'odstránené z obľúbených',
         'toast-already': 'Už je v obľúbených!',
         'toast-error': 'Vyskytla sa chyba!',
         'confirm-remove': 'Odstrániť z obľúbených:',
-        'stats-chart-title': 'Hry podľa Žánrov'
+        'stats-chart-title': 'Hry podľa Žánrov',
+        'fav-view': 'Zobraziť',
+        'fav-remove': 'Vymazať',
+        'fav-confirm': 'Istý?'
     }
 };
 
@@ -396,6 +411,8 @@ function showToast(message, type = 'success') {
 }
 
 // ─── Kedvencek ──────────────────────────────────────────
+let favButtonTimeout = null; // Globális változó a timeout tárolására
+
 document.getElementById("favButton").onclick = () => {
     if (!selectedGame || !db) {
         showToast(translations[currentLanguage]['toast-error'], 'error');
@@ -404,26 +421,66 @@ document.getElementById("favButton").onclick = () => {
 
     const favButton = document.getElementById("favButton");
     const isFavorite = favButton.dataset.isFavorite === 'true';
+    const isConfirmState = favButton.dataset.confirmState === 'true';
     
-    if (isFavorite) {
-        // Eltávolítás a kedvencekből
-        const stmtDelete = db.prepare("DELETE FROM favorites WHERE title = ?");
-        stmtDelete.bind([selectedGame.title]);
-        stmtDelete.run();
-        stmtDelete.free();
-        showToast(`✓ ${selectedGame.title} ${translations[currentLanguage]['toast-removed']}`, 'info');
-    } else {
+    if (!isFavorite) {
+        // Töröljük az esetleges timeout-ot
+        if (favButtonTimeout) {
+            clearTimeout(favButtonTimeout);
+            favButtonTimeout = null;
+        }
+        
         // Hozzáadás a kedvencekhez
         const stmtInsert = db.prepare("INSERT INTO favorites (title, thumbnail, genre, platform) VALUES (?, ?, ?, ?)");
         stmtInsert.run([selectedGame.title, selectedGame.thumbnail, selectedGame.genre, selectedGame.platform]);
         stmtInsert.free();
         showToast(`✓ ${selectedGame.title} ${translations[currentLanguage]['toast-added']}`, 'success');
+        
+        // Explicit módon állítjuk be a confirmState-et false-ra
+        favButton.dataset.confirmState = 'false';
+        updateFavoriteButton();
+    } else {
+        // Már kedvenc - kétlépcsős törlés
+        if (!isConfirmState) {
+            // Töröljük az előző timeout-ot, ha van
+            if (favButtonTimeout) {
+                clearTimeout(favButtonTimeout);
+            }
+            
+            // Első kattintás - megerősítés kérése
+            favButton.innerHTML = translations[currentLanguage]['btn-confirm-remove'];
+            favButton.className = 'btn btn-outline-danger btn-lg w-100';
+            favButton.dataset.confirmState = 'true';
+            
+            // 3 másodperc múlva visszaáll az eredeti állapotba
+            favButtonTimeout = setTimeout(() => {
+                const currentFavButton = document.getElementById("favButton");
+                if (currentFavButton && currentFavButton.dataset.confirmState === 'true') {
+                    currentFavButton.dataset.confirmState = 'false';
+                    updateFavoriteButton();
+                }
+                favButtonTimeout = null;
+            }, 3000);
+        } else {
+            // Második kattintás - törlés
+            // Töröljük a timeout-ot
+            if (favButtonTimeout) {
+                clearTimeout(favButtonTimeout);
+                favButtonTimeout = null;
+            }
+            
+            const stmtDelete = db.prepare("DELETE FROM favorites WHERE title = ?");
+            stmtDelete.bind([selectedGame.title]);
+            stmtDelete.run();
+            stmtDelete.free();
+            showToast(`✓ ${selectedGame.title} ${translations[currentLanguage]['toast-removed']}`, 'info');
+            
+            // Explicit módon állítjuk be a confirmState-et false-ra
+            favButton.dataset.confirmState = 'false';
+            updateFavoriteButton();
+        }
     }
-    
-    // Gomb frissítése
-    updateFavoriteButton();
-};
-
+};   
 // ─── Canvas grafikon (csak a modalban) ───────────────────────────────────
 function drawCanvasStatsModal() {
     const canvas = document.getElementById("statsCanvasModal");
@@ -656,22 +713,66 @@ function openFavoritesModal() {
             rows.forEach(row => {
                 const [id, title, thumbnail, genre, platform] = row;
                 const div = document.createElement("div");
-                div.className = "favorite";
-                div.style.cursor = "pointer";
+                div.className = "favorite-card";
                 div.innerHTML = `
-                    <img src="${thumbnail}" style="width:100%; height:120px; object-fit:cover; border-radius:8px;">
-                    <div class="fav-content mt-2">
+                    <img src="${thumbnail}" style="width:100%; height:120px; object-fit:cover; border-radius:8px 8px 0 0;">
+                    <div class="fav-content">
                         <h6>${title}</h6>
                         <small>${genre}</small><br>
                         <small class="text-muted">${platform}</small>
+                        <div class="fav-actions mt-2">
+                            <button class="btn btn-sm btn-info view-game" data-title="${title}">
+                                <i>👁</i> ${currentLanguage === 'sk' ? 'Zobraziť' : currentLanguage === 'en' ? 'View' : 'Megnéz'}
+                            </button>
+                            <button class="btn btn-sm btn-danger remove-game" data-id="${id}" data-title="${title}" data-confirm-state="false">
+                                <i>🗑</i> ${currentLanguage === 'sk' ? 'Vymazať' : currentLanguage === 'en' ? 'Remove' : 'Törlés'}
+                            </button>
+                        </div>
                     </div>
                 `;
                 
-                // Kattintásra törlés
-                div.onclick = () => {
-                    const confirmMsg = `${translations[currentLanguage]['confirm-remove']} ${title}?`;
-                    const confirmToast = confirm(confirmMsg);
-                    if (confirmToast) {
+                // View gomb - megnyitja a játék modal-t
+                div.querySelector('.view-game').onclick = (e) => {
+                    e.stopPropagation();
+                    const game = allGames.find(g => g.title === title);
+                    if (game) {
+                        closeCurrentModal();
+                        openGameModal(game);
+                    }
+                };
+                
+                // Remove gomb - kétlépcsős törlés
+                const removeBtn = div.querySelector('.remove-game');
+                let timeoutId = null;
+                
+                removeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const isConfirmState = removeBtn.dataset.confirmState === 'true';
+                    
+                    if (!isConfirmState) {
+                        // Első kattintás - megerősítés kérése
+                        removeBtn.innerHTML = `${translations[currentLanguage]['btn-confirm-remove']}`;
+                        removeBtn.className = 'btn btn-sm btn-outline-danger remove-game';
+                        removeBtn.dataset.confirmState = 'true';
+                        
+                        // Töröljük az előző timeout-ot, ha van
+                        if (timeoutId) {
+                            clearTimeout(timeoutId);
+                        }
+                        
+                        // 3 másodperc múlva visszaáll az eredeti állapotba
+                        timeoutId = setTimeout(() => {
+                            removeBtn.innerHTML = `${currentLanguage === 'sk' ? 'Vymazať' : currentLanguage === 'en' ? 'Remove' : 'Törlés'}`;
+                            removeBtn.className = 'btn btn-sm btn-danger remove-game';
+                            removeBtn.dataset.confirmState = 'false';
+                            timeoutId = null;
+                        }, 3000);
+                    } else {
+                        // Második kattintás - törlés
+                        if (timeoutId) {
+                            clearTimeout(timeoutId);
+                        }
+                        
                         const stmtDelete = db.prepare("DELETE FROM favorites WHERE id = ?");
                         stmtDelete.run([id]);
                         stmtDelete.free();
