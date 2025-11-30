@@ -64,7 +64,6 @@ header {
     opacity: 0.9;
 }
 
-/* Animated decorations */
 .header-decoration {
     position: absolute;
     top: 0;
@@ -274,7 +273,6 @@ canvas {
     max-width: 900px;
 }
 
-/* ==== SIDEBAR ==== */
 #sidebar {
     position: fixed;
     left: 20px;
@@ -305,7 +303,6 @@ canvas {
     box-shadow: 0 6px 16px rgba(69, 162, 158, 0.6);
 }
 
-/* Language Menu */
 .language-menu {
     position: absolute;
     left: 75px;
@@ -373,7 +370,6 @@ canvas {
     filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
 }
 
-/* Bootstrap override */
 .btn-primary {
     background-color: #45a29e;
     border-color: #45a29e;
@@ -454,7 +450,6 @@ canvas {
     color: #fff;
 }
 
-/* ==== GAME MODAL IMAGE ==== */
 .game-modal-image-large {
     max-height: 500px;
     max-width: 100%;
@@ -465,7 +460,6 @@ canvas {
     border: 2px solid #45a29e;
 }
 
-/* Responsive kisebb eszközökre */
 @media (max-width: 768px) {
     #filters {
         flex-direction: column;
@@ -546,7 +540,6 @@ canvas {
     }
 }
 
-/* ==== TOAST NOTIFICATIONS ==== */
 .toast {
     min-width: 300px;
     backdrop-filter: blur(10px);
@@ -576,7 +569,6 @@ canvas {
     background-color: rgba(13, 202, 240, 0.95) !important;
 }
 
-/* ==== LOADING INDICATOR ==== */
 #loading-indicator {
     margin: 20px 0;
 }
@@ -586,7 +578,6 @@ canvas {
     border-right-color: transparent;
 }
 
-/* ==== SCROLL SENTINEL ==== */
 #scroll-sentinel {
     visibility: hidden;
 }
