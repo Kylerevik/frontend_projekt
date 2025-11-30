@@ -71,7 +71,6 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="favoritesModalBody">
-                <!-- Kedvencek itt jelennek meg -->
             </div>
         </div>
     </div>
@@ -140,7 +139,6 @@
     <h3 class="mt-4 text-center" data-translate="games-title">Játékok</h3>
     <div id="games"></div>
     
-    <!-- Loading indicator (láthatatlan, csak technikai) -->
     <div id="loading-indicator" style="display: none; text-align: center; padding: 20px; opacity: 0.5;">
         <div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem;">
             <span class="visually-hidden" data-translate="loading">Loading...</span>
@@ -152,20 +150,16 @@
 <div class="modal fade" id="gameModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content p-0">
-            <!-- Cím felül központozva -->
+
             <div class="modal-header border-0 pb-0 justify-content-center position-relative pt-2">
                 <h3 class="modal-title text-center w-100 py-2" id="modalTitle" style="color: #66FCF1; font-weight: 700; font-size: 2.2rem;"></h3>
                 <button type="button" class="btn-close btn-close-white position-absolute" style="right: 15px; top: 15px;" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4 pt-2">
-                <!-- Kép felül, centrálva, nagyobb -->
                 <div class="text-center mb-4">
                     <img id="modalImage" src="" alt="" class="img-fluid rounded game-modal-image-large">
                 </div>
-                
-                <!-- Alsó rész: bal oldal infók, jobb oldal gombok -->
                 <div class="row align-items-start">
-                    <!-- Bal oldal: Leírás, Platform, Műfaj egymás alatt -->
                     <div class="col-md-7">
                         <p id="modalDesc" class="game-description mb-3" style="line-height: 1.6;"></p>
                         
@@ -177,8 +171,6 @@
                             <p class="mb-0"><strong data-translate="modal-genre">Műfaj:</strong> <span id="modalCategory" style="color: #66FCF1;"></span></p>
                         </div>
                     </div>
-                    
-                    <!-- Jobb oldal: Gombok egymás alatt -->
                     <div class="col-md-5">
                         <div class="d-flex flex-column gap-3">
                             <a id="modalPlay" href="#" target="_blank" class="btn btn-success btn-lg w-100" data-translate="btn-play">
