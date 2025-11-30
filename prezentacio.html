@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Games Finder - Prezentáció</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0b0c10 0%, #1f2833 100%);
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 40px 60px 100px 60px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: fadeIn 0.5s ease-in-out;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .slide-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #66FCF1, #45a29e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            color: #FFA500;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            color: #66FCF1;
+        }
+
+        p, li {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #C5C6C7;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #C5C6C7;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li::before {
+            content: "✓ ";
+            color: #66FCF1;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .tech-card {
+            background: rgba(69, 162, 158, 0.1);
+            padding: 18px;
+            border-radius: 12px;
+            border: 2px solid #45a29e;
+            transition: all 0.3s ease;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 252, 241, 0.3);
+            border-color: #66FCF1;
+        }
+
+        .tech-card h3 {
+            font-size: 1.3rem;
+        }
+
+        .tech-card li {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .feature-box {
+            background: rgba(31, 40, 51, 0.6);
+            padding: 18px;
+            border-radius: 10px;
+            border-left: 4px solid #FFA500;
+            margin: 12px 0;
+            width: 100%;
+        }
+
+        .feature-box h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-box p {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+            background: rgba(11, 12, 16, 0.9);
+            padding: 12px 20px;
+            border-radius: 10px;
+        }
+
+        .nav-btn {
+            background: #45a29e;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .nav-btn:hover {
+            background: #66FCF1;
+            transform: scale(1.05);
+        }
+
+        .nav-btn:disabled {
+            background: #1f2833;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(69, 162, 158, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #66FCF1;
+            z-index: 1000;
+        }
+
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .lang-btn {
+            background: rgba(69, 162, 158, 0.3);
+            border: 2px solid #45a29e;
+            color: #C5C6C7;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .lang-btn:hover {
+            background: rgba(69, 162, 158, 0.5);
+            transform: scale(1.05);
+        }
+
+        .lang-btn.active {
+            background: #45a29e;
+            color: white;
+            border-color: #66FCF1;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 20px;
+            align-items: start;
+        }
+
+        .two-column-centered {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            width: 100%;
+            max-width: 1400px;
+            margin-top: 30px;
+        }
+
+        .two-column-centered > div {
+            flex: 0 0 auto;
+            max-width: 500px;
+        }
+
+        .code-block {
+            background: #1f2833;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #66FCF1;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        .highlight {
+            color: #FFA500;
+            font-weight: bold;
+        }
+
+        .icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .center-slide {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 140px);
+        }
+
+        /* Scrollbar stílus */
+        .slide::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .slide::-webkit-scrollbar-track {
+            background: rgba(31, 40, 51, 0.5);
+        }
+
+        .slide::-webkit-scrollbar-thumb {
+            background: #45a29e;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 1200px) {
+            h1 { font-size: 2.8rem; }
+            h2 { font-size: 1.8rem; }
+            .tech-grid, .two-column { grid-template-columns: 1fr; }
+            .two-column-centered { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="language-selector">
+            <button class="lang-btn active" onclick="changeLanguage('hu')">🇭🇺 Magyar</button>
+            <button class="lang-btn" onclick="changeLanguage('en')">🇬🇧 English</button>
+        </div>
+        <div class="slide-counter" id="slideCounter">1 / 10</div>
+
+        <!-- Slide 1: Címlap -->
+        <div class="slide active">
+            <div class="slide-content center-slide">
+                <div class="icon">🎮</div>
+                <h1>Free Games Finder</h1>
+                <p class="subtitle" data-translate="slide1_subtitle1">Ingyenes játékok felfedező alkalmazás</p>
+                <p class="subtitle" style="font-size: 1.1rem; margin-top: 15px;" data-translate="slide1_subtitle2">Webprogramozás - Félévzáró Projekt</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Projekt áttekintés -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 data-translate="slide2_title">📋 Projekt Áttekintés</h2>
+                <div class="feature-box" style="max-width: 1000px;">
+                    <h3 data-translate="slide2_box_title">Téma és cél</h3>
+                    <p data-translate="slide2_box_desc">Egy modern, reszponzív webes alkalmazás, amely segít a felhasználóknak ingyenes játékokat felfedezni.</p>
+                    <ul>
+                        <li data-translate="slide2_li1">500+ ingyenes játék böngészése</li>
+                        <li data-translate="slide2_li2">Részletes szűrési és rendezési lehetőségek</li>
+                        <li data-translate="slide2_li3">Kedvencek mentése és kezelése</li>
+                        <li data-translate="slide2_li4">Vizuális statisztikák megtekintése</li>
+                        <li data-translate="slide2_li5">Többnyelvű támogatás (Magyar, Angol, Szlovák)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Technológiai stack -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 data-translate="slide3_title">🛠️ Felhasznált Technológiák</h2>
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <div class="icon">📄</div>
+                        <h3 data-translate="slide3_card1">Frontend</h3>
+                        <ul>
+                            <li>HTML5</li>
+                            <li>CSS3 (Flexbox, Grid)</li>
+                            <li>JavaScript ES6+</li>
+                            <li>Bootstrap 5.3</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <div class="icon">🔌</div>
+                        <h3 data-translate="slide3_card2">API</h3>
+                        <ul>
+                            <li>RapidAPI</li>
+                            <li>Free-to-Play Games DB</li>
+                            <li>RESTful API</li>
+                            <li>Async/Await</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <div class="icon">💾</div>
+                        <h3 data-translate="slide3_card3">Adattárolás</h3>
+                        <ul>
+                            <li>SQLite (sql.js)</li>
+                            <li>LocalStorage</li>
+                            <li>Kliens-oldali DB</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <div class="icon">📊</div>
+                        <h3 data-translate="slide3_card4">Grafika</h3>
+                        <ul>
+                            <li>Canvas API</li>
+                            <li>Dinamikus grafikonok</li>
+                            <li>CSS animációk</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Követelmények teljesítése -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 data-translate="slide4_title">✅ Követelmények Teljesítése</h2>
+                <div class="two-column">
+                    <div>
+                        <div class="feature-box">
+                            <h3 data-translate="slide4_box1_title">1. DOM Manipuláció</h3>
+                            <p data-translate="slide4_box1_desc">Dinamikus tartalom, infinite scroll, modal kezelés</p>
+                        </div>
+                        <div class="feature-box">
+                            <h3 data-translate="slide4_box2_title">2. Canvas Grafika</h3>
+                            <p data-translate="slide4_box2_desc">Statisztikai bar chart dinamikus adatokkal</p>
+                        </div>
+                        <div class="feature-box">
+                            <h3 data-translate="slide4_box3_title">3. Fájlkezelés</h3>
+                            <p data-translate="slide4_box3_desc">LocalStorage: nyelvi beállítás mentése</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="feature-box">
+                            <h3 data-translate="slide4_box4_title">4. API Használat</h3>
+                            <p data-translate="slide4_box4_desc">RapidAPI, 500+ játék lekérdezése</p>
+                        </div>
+                        <div class="feature-box">
+                            <h3 data-translate="slide4_box5_title">5. SQLite Adatbázis</h3>
+                            <p data-translate="slide4_box5_desc">Kedvencek tárolása CRUD műveletekkel</p>
+                        </div>
+                        <div class="feature-box">
+                            <h3 data-translate="slide4_box6_title">6. Adatmegjelenítés</h3>
+                            <p data-translate="slide4_box6_desc">API, SQLite és LocalStorage vizualizálása</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Főbb funkciók -->
+        <div class="slide">
+            <div class="slide-content center-slide">
+                <h2 data-translate="slide5_title">⚡ Főbb Funkciók</h2>
+                <div class="two-column-centered">
+                    <div>
+                        <h3 data-translate="slide5_h1">🔍 Keresés és Szűrés</h3>
+                        <ul>
+                            <li data-translate="slide5_h1_li1">Szöveges keresés</li>
+                            <li data-translate="slide5_h1_li2">Platform szűrés (PC/Browser)</li>
+                            <li data-translate="slide5_h1_li3">Műfaj szerinti szűrés</li>
+                            <li data-translate="slide5_h1_li4">Rendezés (ABC, dátum)</li>
+                        </ul>
+                        <h3 style="margin-top: 25px;" data-translate="slide5_h2">⭐ Kedvencek</h3>
+                        <ul>
+                            <li data-translate="slide5_h2_li1">SQLite-ban tárolva</li>
+                            <li data-translate="slide5_h2_li2">Hozzáadás/törlés</li>
+                            <li data-translate="slide5_h2_li3">Kétlépcsős megerősítés</li>
+                            <li data-translate="slide5_h2_li4">Részletek megtekintése</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 data-translate="slide5_h3">📊 Statisztikák</h3>
+                        <ul>
+                            <li data-translate="slide5_h3_li1">Canvas bar chart</li>
+                            <li data-translate="slide5_h3_li2">Top 10 műfaj</li>
+                            <li data-translate="slide5_h3_li3">Dinamikus számolás</li>
+                            <li data-translate="slide5_h3_li4">Responsive méretezés</li>
+                        </ul>
+                        <h3 style="margin-top: 25px;" data-translate="slide5_h4">🔥 Top Játékok</h3>
+                        <ul>
+                            <li data-translate="slide5_h4_li1">Legújabb játékok</li>
+                            <li data-translate="slide5_h4_li2">Gyors előnézet</li>
+                            <li data-translate="slide5_h4_li3">Részletes info modal</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Kód példák -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 data-translate="slide6_title">💻 Technikai Megvalósítás</h2>
+                <div class="two-column">
+                    <div>
+                        <h3 data-translate="slide6_h1">API Integráció</h3>
+                        <div class="code-block">
+async function loadGames() {
+  const res = await fetch(API_URL, {
+    headers: {
+      "X-RapidAPI-Key": KEY
+    }
+  });
+  allGames = await res.json();
+}
+                        </div>
+                        <h3 style="margin-top: 15px;" data-translate="slide6_h2">LocalStorage</h3>
+                        <div class="code-block">
+let lang = localStorage
+  .getItem('language') || 'hu';
+
+localStorage.setItem('language', lang);
+                        </div>
+                    </div>
+                    <div>
+                        <h3 data-translate="slide6_h3">SQLite CRUD</h3>
+                        <div class="code-block">
+// Create
+db.prepare("INSERT INTO favorites 
+  VALUES (?, ?, ?, ?)").run([...]);
+
+// Read
+db.exec("SELECT * FROM favorites");
+
+// Delete
+db.prepare("DELETE FROM favorites 
+  WHERE id = ?").run([id]);
+                        </div>
+                        <h3 style="margin-top: 15px;" data-translate="slide6_h4">Canvas</h3>
+                        <div class="code-block">
+const ctx = canvas.getContext("2d");
+const grad = ctx.createLinearGradient();
+ctx.fillStyle = grad;
+ctx.fillRect(x, y, w, h);
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Design és UX -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 data-translate="slide7_title">🎨 Design és UX Funkciók</h2>
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <h3 data-translate="slide7_card1_title">Modern UI</h3>
+                        <ul>
+                            <li data-translate="slide7_card1_li1">Gradiens színek</li>
+                            <li data-translate="slide7_card1_li2">Glow effektek</li>
+                            <li data-translate="slide7_card1_li3">Smooth animációk</li>
+                            <li data-translate="slide7_card1_li4">Glassmorphism</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <h3 data-translate="slide7_card2_title">Responsive Design</h3>
+                        <ul>
+                            <li data-translate="slide7_card2_li1">Mobile-first</li>
+                            <li data-translate="slide7_card2_li2">Grid layout</li>
+                            <li data-translate="slide7_card2_li3">Adaptive typography</li>
+                            <li data-translate="slide7_card2_li4">Touch-friendly</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <h3 data-translate="slide7_card3_title">UX Funkciók</h3>
+                        <ul>
+                            <li data-translate="slide7_card3_li1">Infinite scroll</li>
+                            <li data-translate="slide7_card3_li2">Toast notifikációk</li>
+                            <li data-translate="slide7_card3_li3">Loading indikátorok</li>
+                            <li data-translate="slide7_card3_li4">Modal kezelés</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <h3 data-translate="slide7_card4_title">Interaktivitás</h3>
+                        <ul>
+                            <li data-translate="slide7_card4_li1">Hover effektek</li>
+                            <li data-translate="slide7_card4_li2">Fade-in animációk</li>
+                            <li data-translate="slide7_card4_li3">Kétlépcsős törlés</li>
+                            <li data-translate="slide7_card4_li4">Real-time szűrés</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Adatáramlás -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 data-translate="slide8_title">🔄 Adatáramlás és Architektúra</h2>
+                <div class="feature-box" style="max-width: 1000px;">
+                    <h3 data-translate="slide8_box1_title">1. Adatforrások</h3>
+                    <p><span class="highlight">API</span> <span data-translate="slide8_box1_li1">→ 500+ játék JSON formátumban</span></p>
+                    <p><span class="highlight">LocalStorage</span> <span data-translate="slide8_box1_li2">→ Nyelvi preferencia</span></p>
+                    <p><span class="highlight">SQLite</span> <span data-translate="slide8_box1_li3">→ Kedvenc játékok</span></p>
+                </div>
+                <div class="feature-box" style="max-width: 1000px;">
+                    <h3 data-translate="slide8_box2_title">2. Feldolgozás</h3>
+                    <p><span class="highlight" data-translate="slide8_label_filter">Szűrés</span> <span data-translate="slide8_box2_li1">→ Platform, műfaj, keresőszó alapján</span></p>
+                    <p><span class="highlight" data-translate="slide8_label_sort">Rendezés</span> <span data-translate="slide8_box2_li2">→ ABC, dátum szerinti</span></p>
+                    <p><span class="highlight" data-translate="slide8_label_aggregation">Aggregálás</span> <span data-translate="slide8_box2_li3">→ Statisztikák számítása</span></p>
+                </div>
+                <div class="feature-box" style="max-width: 1000px;">
+                    <h3 data-translate="slide8_box3_title">3. Megjelenítés</h3>
+                    <p><span class="highlight">DOM</span> <span data-translate="slide8_box3_li1">→ Dinamikus játéklista (infinite scroll)</span></p>
+                    <p><span class="highlight">Canvas</span> <span data-translate="slide8_box3_li2">→ Bar chart grafikonok</span></p>
+                    <p><span class="highlight">Modal</span> <span data-translate="slide8_box3_li3">→ Részletes játék információk</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Kihívások -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2 data-translate="slide9_title">🚀 Kihívások és Megoldások</h2>
+                <div class="feature-box" style="max-width: 1000px;">
+                    <h3 data-translate="slide9_box1_title">1. Teljesítmény optimalizálás</h3>
+                    <p><span class="highlight" data-translate="slide9_box_problem">Probléma:</span> <span data-translate="slide9_box1_problem_text">500+ játék egyszerre lassítja az oldalt</span></p>
+                    <p><span class="highlight" data-translate="slide9_box_solution">Megoldás:</span> <span data-translate="slide9_box1_solution_text">Infinite scroll - 20 játék betöltése görgetéskor</span></p>
+                </div>
+                <div class="feature-box" style="max-width: 1000px;">
+                    <h3 data-translate="slide9_box2_title">2. Modal overlay halmozódás</h3>
+                    <p><span class="highlight" data-translate="slide9_box_problem">Probléma:</span> <span data-translate="slide9_box2_problem_text">Több modal nyitva → fekete overlay rétegek</span></p>
+                    <p><span class="highlight" data-translate="slide9_box_solution">Megoldás:</span> <span data-translate="slide9_box2_solution_text">Modal manager + backdrop cleanup rendszer</span></p>
+                </div>
+                <div class="feature-box" style="max-width: 1000px;">
+                    <h3 data-translate="slide9_box3_title">3. Többnyelvűség kezelése</h3>
+                    <p><span class="highlight" data-translate="slide9_box_problem">Probléma:</span> <span data-translate="slide9_box3_problem_text">Dinamikus tartalom fordítása</span></p>
+                    <p><span class="highlight" data-translate="slide9_box_solution">Megoldás:</span> <span data-translate="slide9_box3_solution_text">Translation object + data-translate attribútumok</span></p>
+                </div>
+                <div class="feature-box" style="max-width: 1000px;">
+                    <h3 data-translate="slide9_box4_title">4. Responsive canvas</h3>
+                    <p><span class="highlight" data-translate="slide9_box_problem">Probléma:</span> <span data-translate="slide9_box4_problem_text">Canvas kilóg a modal-ból</span></p>
+                    <p><span class="highlight" data-translate="slide9_box_solution">Megoldás:</span> <span data-translate="slide9_box4_solution_text">Dinamikus méretezés + window resize listener</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Összegzés -->
+    <div class="slide">
+        <div class="slide-content center-slide">
+            <h2 data-translate="slide10_title">🎯 Összegzés és Eredmények</h2>
+            <div class="two-column-centered">
+                <div>
+                    <h3 data-translate="slide10_col1_title">Elért célok</h3>
+                    <ul>
+                        <li data-translate="slide10_col1_li1">Minden követelmény teljesítve</li>
+                        <li data-translate="slide10_col1_li2">Modern, professzionális UI</li>
+                        <li data-translate="slide10_col1_li3">500+ játék integrálva</li>
+                        <li data-translate="slide10_col1_li4">SQLite adatbázis működik</li>
+                        <li data-translate="slide10_col1_li5">Canvas grafikonok</li>
+                        <li data-translate="slide10_col1_li6">3 nyelv támogatása</li>
+                        <li data-translate="slide10_col1_li7">Teljesen reszponzív</li>
+                        <li data-translate="slide10_col1_li8">Portfólió minőség</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 data-translate="slide10_col2_title">Technikai eredmények</h3>
+                    <ul>
+                        <li data-translate="slide10_col2_li1">~1000 sor JavaScript</li>
+                        <li data-translate="slide10_col2_li2">~500 sor CSS</li>
+                        <li data-translate="slide10_col2_li3">CRUD műveletek SQLite-ban</li>
+                        <li data-translate="slide10_col2_li4">RESTful API integráció</li>
+                        <li data-translate="slide10_col2_li5">Canvas 2D rendering</li>
+                        <li data-translate="slide10_col2_li6">LocalStorage kezelés</li>
+                        <li data-translate="slide10_col2_li7">Infinite scroll algoritmus</li>
+                        <li data-translate="slide10_col2_li8">State management</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <h1 data-translate="slide10_thanks" style="font-size: 2.5rem;">Köszönöm a figyelmet! 🎮</h1>
+            </div>
+        </div>
+    </div>
+
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">◀ Előző</button>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Következő ▶</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let currentLanguage = 'hu';
+
+        // Fordítások
+        const translations = {
+    hu: {
+        slide1_subtitle1: "Ingyenes játékok felfedező alkalmazás",
+        slide1_subtitle2: "Webprogramozás - Félévzáró Projekt",
+        
+        slide2_title: "📋 Projekt Áttekintés",
+        slide2_box_title: "Téma és cél",
+        slide2_box_desc: "Egy modern, reszponzív webes alkalmazás, amely segít a felhasználóknak ingyenes játékokat felfedezni.",
+        slide2_li1: "500+ ingyenes játék böngészése",
+        slide2_li2: "Részletes szűrési és rendezési lehetőségek",
+        slide2_li3: "Kedvencek mentése és kezelése",
+        slide2_li4: "Vizuális statisztikák megtekintése",
+        slide2_li5: "Többnyelvű támogatás (Magyar, Angol, Szlovák)",
+        
+        slide3_title: "🛠️ Felhasznált Technológiák",
+        slide3_card1: "Frontend",
+        slide3_card2: "API",
+        slide3_card3: "Adattárolás",
+        slide3_card4: "Grafika",
+        
+        slide4_title: "✅ Követelmények Teljesítése",
+        slide4_box1_title: "1. DOM Manipuláció",
+        slide4_box1_desc: "Dinamikus tartalom, infinite scroll, modal kezelés",
+        slide4_box2_title: "2. Canvas Grafika",
+        slide4_box2_desc: "Statisztikai bar chart dinamikus adatokkal",
+        slide4_box3_title: "3. Fájlkezelés",
+        slide4_box3_desc: "LocalStorage: nyelvi beállítás mentése",
+        slide4_box4_title: "4. API Használat",
+        slide4_box4_desc: "RapidAPI, 500+ játék lekérdezése",
+        slide4_box5_title: "5. SQLite Adatbázis",
+        slide4_box5_desc: "Kedvencek tárolása CRUD műveletekkel",
+        slide4_box6_title: "6. Adatmegjelenítés",
+        slide4_box6_desc: "API, SQLite és LocalStorage vizualizálása",
+        
+        slide5_title: "⚡ Főbb Funkciók",
+        slide5_h1: "🔍 Keresés és Szűrés",
+        slide5_h1_li1: "Szöveges keresés",
+        slide5_h1_li2: "Platform szűrés (PC/Browser)",
+        slide5_h1_li3: "Műfaj szerinti szűrés",
+        slide5_h1_li4: "Rendezés (ABC, dátum)",
+        slide5_h2: "⭐ Kedvencek",
+        slide5_h2_li1: "SQLite-ban tárolva",
+        slide5_h2_li2: "Hozzáadás/törlés",
+        slide5_h2_li3: "Kétlépcsős megerősítés",
+        slide5_h2_li4: "Részletek megtekintése",
+        slide5_h3: "📊 Statisztikák",
+        slide5_h3_li1: "Canvas bar chart",
+        slide5_h3_li2: "Top 10 műfaj",
+        slide5_h3_li3: "Dinamikus számolás",
+        slide5_h3_li4: "Responsive méretezés",
+        slide5_h4: "🔥 Top Játékok",
+        slide5_h4_li1: "Legújabb játékok",
+        slide5_h4_li2: "Gyors előnézet",
+        slide5_h4_li3: "Részletes info modal",
+        
+        slide6_title: "💻 Technikai Megvalósítás",
+        slide6_h1: "API Integráció",
+        slide6_h2: "LocalStorage",
+        slide6_h3: "SQLite CRUD",
+        slide6_h4: "Canvas",
+        
+        slide7_title: "🎨 Design és UX Funkciók",
+        slide7_card1_title: "Modern UI",
+        slide7_card1_li1: "Gradiens színek",
+        slide7_card1_li2: "Glow effektek",
+        slide7_card1_li3: "Smooth animációk",
+        slide7_card1_li4: "Glassmorphism",
+        slide7_card2_title: "Responsive Design",
+        slide7_card2_li1: "Mobile-first",
+        slide7_card2_li2: "Grid layout",
+        slide7_card2_li3: "Adaptive typography",
+        slide7_card2_li4: "Touch-friendly",
+        slide7_card3_title: "UX Funkciók",
+        slide7_card3_li1: "Infinite scroll",
+        slide7_card3_li2: "Toast notifikációk",
+        slide7_card3_li3: "Loading indikátorok",
+        slide7_card3_li4: "Modal kezelés",
+        slide7_card4_title: "Interaktivitás",
+        slide7_card4_li1: "Hover effektek",
+        slide7_card4_li2: "Fade-in animációk",
+        slide7_card4_li3: "Kétlépcsős törlés",
+        slide7_card4_li4: "Real-time szűrés",
+        
+        slide8_title: "🔄 Adatáramlás és Architektúra",
+        slide8_box1_title: "1. Adatforrások",
+        slide8_box1_li1: "→ 500+ játék JSON formátumban",
+        slide8_box1_li2: "→ Nyelvi preferencia",
+        slide8_box1_li3: "→ Kedvenc játékok",
+        slide8_box2_title: "2. Feldolgozás",
+        slide8_label_filter: "Szűrés",
+        slide8_box2_li1: "→ Platform, műfaj, keresőszó alapján",
+        slide8_label_sort: "Rendezés",
+        slide8_box2_li2: "→ ABC, dátum szerinti",
+        slide8_label_aggregation: "Aggregálás",
+        slide8_box2_li3: "→ Statisztikák számítása",
+        slide8_box3_title: "3. Megjelenítés",
+        slide8_box3_li1: "→ Dinamikus játéklista (infinite scroll)",
+        slide8_box3_li2: "→ Bar chart grafikonok",
+        slide8_box3_li3: "→ Részletes játék információk",
+        
+        slide9_title: "🚀 Kihívások és Megoldások",
+        slide9_box1_title: "1. Teljesítmény optimalizálás",
+        slide9_box_problem: "Probléma:",
+        slide9_box1_problem_text: "500+ játék egyszerre lassítja az oldalt",
+        slide9_box_solution: "Megoldás:",
+        slide9_box1_solution_text: "Infinite scroll - 20 játék betöltése görgetéskor",
+        slide9_box2_title: "2. Modal overlay halmozódás",
+        slide9_box2_problem_text: "Több modal nyitva → fekete overlay rétegek",
+        slide9_box2_solution_text: "Modal manager + backdrop cleanup rendszer",
+        slide9_box3_title: "3. Többnyelvűség kezelése",
+        slide9_box3_problem_text: "Dinamikus tartalom fordítása",
+        slide9_box3_solution_text: "Translation object + data-translate attribútumok",
+        slide9_box4_title: "4. Responsive canvas",
+        slide9_box4_problem_text: "Canvas kilóg a modal-ból",
+        slide9_box4_solution_text: "Dinamikus méretezés + window resize listener",
+        
+        slide10_title: "🎯 Összegzés és Eredmények",
+        slide10_col1_title: "Elért célok",
+        slide10_col1_li1: "Minden követelmény teljesítve",
+        slide10_col1_li2: "Modern, professzionális UI",
+        slide10_col1_li3: "500+ játék integrálva",
+        slide10_col1_li4: "SQLite adatbázis működik",
+        slide10_col1_li5: "Canvas grafikonok",
+        slide10_col1_li6: "3 nyelv támogatása",
+        slide10_col1_li7: "Teljesen reszponzív",
+        slide10_col1_li8: "Portfólió minőség",
+        slide10_col2_title: "Technikai eredmények",
+        slide10_col2_li1: "~1000 sor JavaScript",
+        slide10_col2_li2: "~500 sor CSS",
+        slide10_col2_li3: "CRUD műveletek SQLite-ban",
+        slide10_col2_li4: "RESTful API integráció",
+        slide10_col2_li5: "Canvas 2D rendering",
+        slide10_col2_li6: "LocalStorage kezelés",
+        slide10_col2_li7: "Infinite scroll algoritmus",
+        slide10_col2_li8: "State management",
+        slide10_thanks: "Köszönöm a figyelmet! 🎮",
+        
+        btn_prev: "◀ Előző",
+        btn_next: "Következő ▶"
+    },
+    en: {
+        slide1_subtitle1: "Free-to-play games discovery application",
+        slide1_subtitle2: "Web Programming - Final Project",
+        
+        slide2_title: "📋 Project Overview",
+        slide2_box_title: "Theme and Goal",
+        slide2_box_desc: "A modern, responsive web application that helps users discover free-to-play games.",
+        slide2_li1: "Browse 500+ free games",
+        slide2_li2: "Detailed filtering and sorting options",
+        slide2_li3: "Save and manage favorites",
+        slide2_li4: "View visual statistics",
+        slide2_li5: "Multi-language support (Hungarian, English, Slovak)",
+        
+        slide3_title: "🛠️ Technologies Used",
+        slide3_card1: "Frontend",
+        slide3_card2: "API",
+        slide3_card3: "Data Storage",
+        slide3_card4: "Graphics",
+        
+        slide4_title: "✅ Requirements Fulfilled",
+        slide4_box1_title: "1. DOM Manipulation",
+        slide4_box1_desc: "Dynamic content, infinite scroll, modal handling",
+        slide4_box2_title: "2. Canvas Graphics",
+        slide4_box2_desc: "Statistical bar chart with dynamic data",
+        slide4_box3_title: "3. File Management",
+        slide4_box3_desc: "LocalStorage: saving language settings",
+        slide4_box4_title: "4. API Usage",
+        slide4_box4_desc: "RapidAPI, querying 500+ games",
+        slide4_box5_title: "5. SQLite Database",
+        slide4_box5_desc: "Storing favorites with CRUD operations",
+        slide4_box6_title: "6. Data Display",
+        slide4_box6_desc: "Visualizing API, SQLite and LocalStorage",
+        
+        slide5_title: "⚡ Main Features",
+        slide5_h1: "🔍 Search and Filter",
+        slide5_h1_li1: "Text search",
+        slide5_h1_li2: "Platform filter (PC/Browser)",
+        slide5_h1_li3: "Genre-based filtering",
+        slide5_h1_li4: "Sorting (ABC, date)",
+        slide5_h2: "⭐ Favorites",
+        slide5_h2_li1: "Stored in SQLite",
+        slide5_h2_li2: "Add/remove",
+        slide5_h2_li3: "Two-step confirmation",
+        slide5_h2_li4: "View details",
+        slide5_h3: "📊 Statistics",
+        slide5_h3_li1: "Canvas bar chart",
+        slide5_h3_li2: "Top 10 genres",
+        slide5_h3_li3: "Dynamic calculation",
+        slide5_h3_li4: "Responsive sizing",
+        slide5_h4: "🔥 Top Games",
+        slide5_h4_li1: "Latest games",
+        slide5_h4_li2: "Quick preview",
+        slide5_h4_li3: "Detailed info modal",
+        
+        slide6_title: "💻 Technical Implementation",
+        slide6_h1: "API Integration",
+        slide6_h2: "LocalStorage",
+        slide6_h3: "SQLite CRUD",
+        slide6_h4: "Canvas",
+        
+        slide7_title: "🎨 Design and UX Features",
+        slide7_card1_title: "Modern UI",
+        slide7_card1_li1: "Gradient colors",
+        slide7_card1_li2: "Glow effects",
+        slide7_card1_li3: "Smooth animations",
+        slide7_card1_li4: "Glassmorphism",
+        slide7_card2_title: "Responsive Design",
+        slide7_card2_li1: "Mobile-first",
+        slide7_card2_li2: "Grid layout",
+        slide7_card2_li3: "Adaptive typography",
+        slide7_card2_li4: "Touch-friendly",
+        slide7_card3_title: "UX Features",
+        slide7_card3_li1: "Infinite scroll",
+        slide7_card3_li2: "Toast notifications",
+        slide7_card3_li3: "Loading indicators",
+        slide7_card3_li4: "Modal management",
+        slide7_card4_title: "Interactivity",
+        slide7_card4_li1: "Hover effects",
+        slide7_card4_li2: "Fade-in animations",
+        slide7_card4_li3: "Two-step deletion",
+        slide7_card4_li4: "Real-time filtering",
+        
+        slide8_title: "🔄 Data Flow and Architecture",
+        slide8_box1_title: "1. Data Sources",
+        slide8_box1_li1: "→ 500+ games in JSON format",
+        slide8_box1_li2: "→ Language preference",
+        slide8_box1_li3: "→ Favorite games",
+        slide8_box2_title: "2. Processing",
+        slide8_label_filter: "Filtering",
+        slide8_box2_li1: "→ Based on platform, genre, search term",
+        slide8_label_sort: "Sorting",
+        slide8_box2_li2: "→ By ABC, date",
+        slide8_label_aggregation: "Aggregation",
+        slide8_box2_li3: "→ Statistics calculation",
+        slide8_box3_title: "3. Display",
+        slide8_box3_li1: "→ Dynamic game list (infinite scroll)",
+        slide8_box3_li2: "→ Bar chart graphics",
+        slide8_box3_li3: "→ Detailed game information",
+        
+        slide9_title: "🚀 Challenges and Solutions",
+        slide9_box1_title: "1. Performance optimization",
+        slide9_box_problem: "Problem:",
+        slide9_box1_problem_text: "500+ games at once slow down the page",
+        slide9_box_solution: "Solution:",
+        slide9_box1_solution_text: "Infinite scroll - loading 20 games on scroll",
+        slide9_box2_title: "2. Modal overlay stacking",
+        slide9_box2_problem_text: "Multiple modals open → black overlay layers",
+        slide9_box2_solution_text: "Modal manager + backdrop cleanup system",
+        slide9_box3_title: "3. Multi-language handling",
+        slide9_box3_problem_text: "Translating dynamic content",
+        slide9_box3_solution_text: "Translation object + data-translate attributes",
+        slide9_box4_title: "4. Responsive canvas",
+        slide9_box4_problem_text: "Canvas overflows from modal",
+        slide9_box4_solution_text: "Dynamic sizing + window resize listener",
+        
+        slide10_title: "🎯 Summary and Results",
+        slide10_col1_title: "Goals Achieved",
+        slide10_col1_li1: "All requirements fulfilled",
+        slide10_col1_li2: "Modern, professional UI",
+        slide10_col1_li3: "500+ games integrated",
+        slide10_col1_li4: "SQLite database working",
+        slide10_col1_li5: "Canvas graphics",
+        slide10_col1_li6: "3 language support",
+        slide10_col1_li7: "Fully responsive",
+        slide10_col1_li8: "Portfolio quality",
+        slide10_col2_title: "Technical Results",
+        slide10_col2_li1: "~1000 lines of JavaScript",
+        slide10_col2_li2: "~500 lines of CSS",
+        slide10_col2_li3: "CRUD operations in SQLite",
+        slide10_col2_li4: "RESTful API integration",
+        slide10_col2_li5: "Canvas 2D rendering",
+        slide10_col2_li6: "LocalStorage management",
+        slide10_col2_li7: "Infinite scroll algorithm",
+        slide10_col2_li8: "State management",
+        slide10_thanks: "Thank you for your attention! 🎮",
+        
+        btn_prev: "◀ Previous",
+        btn_next: "Next ▶"
+    }
+};
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Gombok aktív állapota
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Szövegek fordítása
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Gombok fordítása
+            document.getElementById('prevBtn').innerHTML = translations[lang].btn_prev;
+            document.getElementById('nextBtn').innerHTML = translations[lang].btn_next;
+        }
+
+        function updateSlideCounter() {
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+        }
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[n].classList.add('active');
+            slides[n].scrollTop = 0;
+            
+            document.getElementById('prevBtn').disabled = n === 0;
+            document.getElementById('nextBtn').disabled = n === totalSlides - 1;
+            
+            updateSlideCounter();
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        showSlide(0);
+    </script>
+</body>
+</html>
